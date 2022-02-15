@@ -1,0 +1,11 @@
+/**
+ * Default base styles from tailwindcss
+ */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/**
+ * The default template to use for styling the sight.
+ */
+@import "light/index.css";
