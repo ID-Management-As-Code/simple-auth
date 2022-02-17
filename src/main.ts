@@ -1,11 +1,14 @@
 import { serve } from './depts.ts';
-import { serverHandler } from "./server/serverHandler.ts";
+import { startup } from './server/startup.ts';
 
 const enableSecurity = false;
 const hostname = 'localhost';
 const port = 4000;
 const protocol = enableSecurity ? 'https' : 'http';
 
-serve(serverHandler, { hostname, port });
+startup()
+    .then((serverHandler) => {
+        serve(serverHandler, { hostname, port });
 
-console.log(`Running server on ${protocol}://${hostname}:${port}`)
+        console.log(`Running server on ${protocol}://${hostname}:${port}`);
+    });
