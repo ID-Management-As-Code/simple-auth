@@ -9,6 +9,7 @@ import {
 import type { LinksFunction, MetaFunction } from 'remix';
 
 import styles from './styles/main.css';
+import { Layout } from './ui';
 
 export const links: LinksFunction = () => {
     return [
@@ -31,7 +32,9 @@ export default function App() {
                 <Links />
             </head>
             <body>
-                <Outlet />
+                <Layout>
+                    <Outlet />
+                </Layout>
 
                 <ScrollRestoration />
 

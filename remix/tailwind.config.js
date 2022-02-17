@@ -4,6 +4,13 @@ module.exports = {
     ],
     plugins: [],
     theme: {
-        extend: {}
+        container: {
+            center: true
+        },
+        extend: {
+            fontFamily: {
+                'montserrat-alt': ['Montserrat Alternates', 'sans-serif']
+            }
+        }
     }
 }
