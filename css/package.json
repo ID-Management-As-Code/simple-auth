@@ -1,7 +1,7 @@
 {
     "scripts": {
-        "build": "tailwindcss -m -i ./themes/main.css -o ../src/public/styles/styles.min.css",
-        "watch": "tailwindcss -w -i ./themes/main.css -o ../src/public/styles/styles.css"
+        "build": "tailwindcss -m -i ./themes/main.css -o ../src/public/css/styles.min.css",
+        "watch": "tailwindcss -w -i ./themes/main.css -o ../src/public/css/styles.css"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.2",
