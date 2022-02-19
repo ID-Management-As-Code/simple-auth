@@ -1,14 +1,37 @@
 import { PropsWithChildren } from 'react';
 import { faRightToBracket } from '@fortawesome/pro-duotone-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from 'remix';
+import { Link, useMatches } from 'remix';
 import { Logo } from './Logo';
-import { useLayout } from '~/providers';
 
 type Properties = PropsWithChildren<{}>;
 
+const hiddenOnPaths = [
+    '/auth/signin'
+];
+
+export function isFooterVisible(paths: string[]) {
+    for (const path of hiddenOnPaths) {
+        if (paths.includes(path)) return false;
+    }
+
+    return true;
+}
+
+export function isNavigationVisible(paths: string[]) {
+    for (const path of hiddenOnPaths) {
+        if (paths.includes(path)) return false;
+    }
+
+    return true;
+}
+
 export const Layout = ({ children }: Properties) => {
-    const { showFooter, showNavigation } = useLayout();
+    const matches = useMatches();
+    const paths = matches.map(match => match.pathname);
+
+    const showFooter = isFooterVisible(paths);
+    const showNavigation = isNavigationVisible(paths);
 
     return (
         <div className="flex flex-col" id="root">

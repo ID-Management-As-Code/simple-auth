@@ -7,11 +7,8 @@ import {
     ScrollRestoration
 } from 'remix';
 import type { LinksFunction, MetaFunction } from 'remix';
-
-import styles from './styles/main.css';
 import { Layout } from './ui';
-import { LayoutConfiguration, LayoutProvider } from './providers';
-import { useState } from 'react';
+import styles from './styles/main.css';
 
 export const links: LinksFunction = () => {
     return [
@@ -24,22 +21,6 @@ export const meta: MetaFunction = () => {
 };
 
 export default function App() {
-    const [showFooter, setShowFooter] = useState(true);
-    const [showNavigation, setShowNavigation] = useState(true);
-
-    let layoutConfiguration: LayoutConfiguration = {
-        reset() {
-            setShowFooter(true);
-            setShowNavigation(true);
-
-            console.log(this);
-        },
-        setShowFooter,
-        setShowNavigation,
-        showFooter,
-        showNavigation
-    };
-
     return (
         <html lang="en">
             <head>
@@ -50,11 +31,9 @@ export default function App() {
                 <Links />
             </head>
             <body>
-                <LayoutProvider configuration={layoutConfiguration}>
-                    <Layout>
-                        <Outlet />
-                    </Layout>
-                </LayoutProvider>
+                <Layout>
+                    <Outlet />
+                </Layout>
 
                 <ScrollRestoration />
 

@@ -1,9 +1,5 @@
-import { useLayout } from "~/providers";
-
 export default function Index() {
-    const { reset } = useLayout();
 
-    reset();
 
     return (
         <div className="container py-4">
