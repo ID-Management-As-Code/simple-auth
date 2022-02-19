@@ -7,9 +7,8 @@ import {
     ScrollRestoration
 } from 'remix';
 import type { LinksFunction, MetaFunction } from 'remix';
-
-import styles from './styles/main.css';
 import { Layout } from './ui';
+import styles from './styles/main.css';
 
 export const links: LinksFunction = () => {
     return [
