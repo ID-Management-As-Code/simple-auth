@@ -7,5 +7,5 @@ A simple, reusable, authentication server for logging users in.
 Below are the following naming conventions to use when branching code:
 
 - master/main - principis
-- features - qualitatis/<issue_number>/<summary>
-- bugs/hotfixes - emendavi/<issue_number>/<summary>
+- features - qualitatis/\<issue_number\>/\<summary\>
+- bugs/hotfixes - emendavi/\<issue_number\>/\<summary\>
