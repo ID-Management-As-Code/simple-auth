@@ -1,9 +1,6 @@
 import { Settings } from "@data/models/Settings.ts";
+import { Entity } from "../Entity.ts";
 
-export interface SettingsEntity {
-    add(settings: Settings): void;
-    getAll(): Settings[];
-    getById(id: string): Settings;
-    remove(id: string): void;
-    update(settings: Settings): void;
+export interface SettingsEntity extends Entity<Settings> {
+
 }
