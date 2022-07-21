@@ -1,7 +1,9 @@
 {
     "imports": {
+        "$fauna": "https://cdn.skypack.dev/faunadb?dts",
         "$fresh/": "https://deno.land/x/fresh@1.0.1/",
         "@components/": "./components/",
+        "@data/": "./data/",
         "@utilities/": "./utilities/",
         "preact": "https://esm.sh/preact@10.8.2",
         "preact/": "https://esm.sh/preact@10.8.2/",
