@@ -1,13 +1,15 @@
-import { getAppConfig } from "@appConfig";
 import { Database } from "../abstractions/index.ts";
 import { FaunaDb } from "./fauna/FaunaDb.ts";
 
 export function getDbProvider(): Database {
-    const configuration = getAppConfig();
+    const dbProvider = Deno.env.get("DB_PROVIDER");
 
-    switch (configuration.dbProvider) {
+    switch (dbProvider) {
         case "fauna": return new FaunaDb();
 
-        default: throw new Error(`A database provider for ${configuration.dbProvider} could not be found.`);
+        default: throw new Error(
+            `A database provider for (${dbProvider}) could not be found. `
+            + 'Please ensure a valid value is assigned to the DB_PROVIDER environment variable.'
+        );
     }
 }
