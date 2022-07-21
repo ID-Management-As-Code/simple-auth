@@ -1,9 +1,9 @@
-import { Client } from "$fauna";
+import fauna from "$fauna";
 import { Database, SettingsEntity } from "@data/abstractions/index.ts";
 import { FaunaSettingsEntity } from "./entities/FaunaSettingsEntity.ts";
 
 export class FaunaDb implements Database {
-    private client: Client;
+    private client: fauna.Client;
 
     settings: SettingsEntity;
 
@@ -12,7 +12,7 @@ export class FaunaDb implements Database {
 
         if (!secret) throw new Error("The FAUNA_SECRET environment variable is required.");
 
-        this.client = new Client({
+        this.client = new fauna.Client({
             domain: Deno.env.get("FAUNA_ENDPOINT"),
             secret: secret
         });

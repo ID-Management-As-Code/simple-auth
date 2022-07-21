@@ -1,14 +1,16 @@
-import { Client, query, values } from "$fauna";
+import fauna from "$fauna";
 import { SettingsEntity } from "@data/abstractions/index.ts";
 import { Settings } from "@data/models/Settings.ts";
 
-type SettingsDocument = values.Document<Settings>;
-type SettingsPage = values.Page<SettingsDocument>;
+const { query } = fauna;
+
+type SettingsDocument = fauna.values.Document<Settings>;
+type SettingsPage = fauna.values.Page<SettingsDocument>;
 
 export class FaunaSettingsEntity implements SettingsEntity {
     private collection = "settings";
 
-    constructor(private client: Client) {}
+    constructor(private client: fauna.Client) {}
 
     async add(settings: Settings) {
         const document = await this.client.query<SettingsDocument>(
@@ -47,6 +49,19 @@ export class FaunaSettingsEntity implements SettingsEntity {
                 query.Ref(
                     query.Collection(this.collection),
                     id
+                )
+            )
+        );
+
+        return { ...document.data, id: document.ref.id };
+    }
+
+    async getDefault() {
+        const document = await this.client.query<SettingsDocument>(
+            query.Get(
+                query.Match(
+                    query.Index("settings_by_default"),
+                    true
                 )
             )
         );
