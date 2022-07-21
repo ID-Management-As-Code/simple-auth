@@ -18,6 +18,11 @@ export interface Settings {
     description: string;
 
     /**
+     * Determines whether or not to use these as the default settings.
+     */
+    default: boolean;
+
+    /**
      * The name of the settings to use for easily switching between multiple
      * site settings.
      */
