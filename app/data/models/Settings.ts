@@ -1,16 +1,13 @@
+import { AuditDateTimes } from "@data/abstractions/AuditDateTimes.ts";
+
 /**
  * Represents settings used for configuring the application.
  */
-export interface Settings {
+export interface Settings extends AuditDateTimes {
     /**
      * The primary identifier.
      */
     id: string;
-
-    /**
-     * The ISO-formatted date-time the document was created at.
-     */
-    createdAt: string;
 
     /**
      * A description of the site, to use for meta data information.
@@ -20,7 +17,7 @@ export interface Settings {
     /**
      * Determines whether or not to use these as the default settings.
      */
-    default: boolean;
+    default?: boolean;
 
     /**
      * The name of the settings to use for easily switching between multiple
@@ -38,9 +35,4 @@ export interface Settings {
      * be used.
      */
     underMaintenance: boolean;
-
-    /**
-     * The ISO-formatted date-time the document was updated at.
-     */
-    updatedAt: string;
 }
