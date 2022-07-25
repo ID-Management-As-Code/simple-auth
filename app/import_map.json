@@ -1,6 +1,8 @@
 {
     "imports": {
-        "$fauna": "https://cdn.skypack.dev/faunadb?dts",
+        "$argon": "https://cdn.skypack.dev/hash-wasm?dts",
+        "$crypto": "https://deno.land/std@0.149.0/crypto/mod.ts",
+        "$fauna": "https://cdn.skypack.dev/faunadb@4.6.0?dts",
         "$fresh/": "https://deno.land/x/fresh@1.0.1/",
         "@components/": "./components/",
         "@data/": "./data/",
