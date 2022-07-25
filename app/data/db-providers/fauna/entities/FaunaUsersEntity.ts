@@ -1,32 +1,32 @@
 import fauna from "$fauna";
-import { SettingsEntity } from "@data/abstractions/index.ts";
-import { Settings } from "@data/index.ts";
+import { UsersEntity } from "@data/abstractions/index.ts";
+import { User } from "@data/index.ts";
 
 const { query } = fauna;
 
-type SettingsDocument = fauna.values.Document<Settings>;
-type SettingsPage = fauna.values.Page<SettingsDocument>;
+type UsersDocument = fauna.values.Document<User>;
+type UsersPage = fauna.values.Page<UsersDocument>;
 
-export class FaunaSettingsEntity implements SettingsEntity {
-    private collection = "settings";
+export class FaunaUsersEntity implements UsersEntity {
+    private collection = "users";
 
     constructor(private client: fauna.Client) {}
 
-    async add(settings: Settings) {
-        const { id: _, ...data } = settings;
+    async add(user: User) {
+        const { id: _, ...data } = user;
 
-        const document = await this.client.query<SettingsDocument>(
+        const document = await this.client.query<UsersDocument>(
             query.Create(
                 query.Collection(this.collection),
                 { data }
             )
         );
 
-        settings.id = document.ref.id;
+        user.id = document.ref.id;
     }
 
     async getAll() {
-        const documents = await this.client.query<SettingsPage>(
+        const documents = await this.client.query<UsersPage>(
             query.Map(
                 query.Paginate(
                     query.Documents(
@@ -46,33 +46,25 @@ export class FaunaSettingsEntity implements SettingsEntity {
     }
 
     async getById(id: string) {
-        try {
-            const document = await this.client.query<SettingsDocument>(
-                query.Get(
-                    query.Ref(
-                        query.Collection(this.collection),
-                        id
-                    )
+        const document = await this.client.query<UsersDocument>(
+            query.Get(
+                query.Ref(
+                    query.Collection(this.collection),
+                    id
                 )
-            );
+            )
+        );
 
-            return { ...document.data, id: document.ref.id };
-        } catch (error) {
-            if (error instanceof fauna.errors.NotFound) {
-                return undefined;
-            }
-
-            throw error;
-        }
+        return { ...document.data, id: document.ref.id };
     }
 
-    async getDefault() {
+    async getByUsername(username: string) {
         try {
-            const document = await this.client.query<SettingsDocument>(
+            const document = await this.client.query<UsersDocument>(
                 query.Get(
                     query.Match(
-                        query.Index("settings_by_default"),
-                        true
+                        query.Index("users_by_username"),
+                        username
                     )
                 )
             );
@@ -88,17 +80,17 @@ export class FaunaSettingsEntity implements SettingsEntity {
     }
 
     async remove(id: string) {
-        await this.client.query<SettingsDocument>(
+        await this.client.query<UsersDocument>(
             query.Delete(
                 query.Ref(query.Collection(this.collection), id)
             )
         );
     }
 
-    async update(settings: Settings) {
-        const { id, ...data } = settings;
+    async update(user: User) {
+        const { id, ...data } = user;
 
-        await this.client.query<SettingsDocument>(
+        await this.client.query<UsersDocument>(
             query.Update(
                 query.Ref(query.Collection(this.collection), id),
                 { data }
