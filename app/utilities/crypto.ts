@@ -1,5 +1,5 @@
 import { argon2id, argon2Verify } from "$argon";
-import { crypto } from "$crypto";
+import { crypto } from "$std/crypto/mod.ts";
 import { EnvKey, getEnvValue } from "./env.ts";
 
 export const hashPassword = async (password: string) => await argon2id({

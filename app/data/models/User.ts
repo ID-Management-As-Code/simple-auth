@@ -5,6 +5,8 @@ export interface User extends AuditDateTimes {
 
     disabled?: boolean;
 
+    internalId: string;
+
     isAdmin?: boolean;
 
     passwordHash: string;

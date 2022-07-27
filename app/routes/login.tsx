@@ -1,10 +1,67 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
 import { Fragment, h } from "preact";
-import { PageProps } from "$fresh/server.ts";
+import { HandlerContext, Handlers, PageProps } from "$fresh/server.ts";
+import { formDataToObject } from "https://deno.land/x/form_data_to_object@0.1.0/mod.ts";
 import { PrimaryButton, TextSeparator } from "@components/index.ts";
+import { getDbProvider } from "@data/index.ts";
+import { verifyPassword } from "@utilities/crypto.ts";
+import { createUserSession } from "@utilities/session.ts";
 
-export default function Login({ }: PageProps) {
+interface Data {
+    formSubmitted: boolean;
+    loginSuccess: boolean;
+    rememberMe?: boolean;
+    username?: string;
+}
+
+interface FormModel {
+    password: string;
+    rememberMe?: boolean;
+    username: string;
+}
+
+export const handler: Handlers<Data> = {
+    GET(_: Request, context: HandlerContext<Data>) {
+        return context.render({ formSubmitted: false, loginSuccess: false });
+    },
+    async POST(request: Request, context: HandlerContext<Data>) {
+        const formData = await request.formData();
+
+        const loginRequest = formDataToObject<FormModel>(formData);
+
+        const responseData = {
+            formSubmitted: true,
+            loginSuccess: false,
+            rememberMe: loginRequest.rememberMe,
+            username: loginRequest.username
+        };
+
+        const db = getDbProvider();
+
+        const user = await db.users.getByUsername(loginRequest.username);
+
+        if (!user) return context.render(responseData);
+
+        const validUser = await verifyPassword(loginRequest.password, user.passwordHash);
+
+        responseData.loginSuccess = validUser;
+
+        if (responseData.loginSuccess) {
+            const requestUrl = new URL(request.url);
+
+            const response = Response.redirect(requestUrl.origin, 303);
+
+            const loginResponse = createUserSession(response, user.internalId, user.username, loginRequest.rememberMe || false);
+
+            return loginResponse;
+        }
+
+        return context.render(responseData);
+    }
+};
+
+export default function Login({ data }: PageProps<Data>) {
     return (
         <div className="flex-grow flex flex-col justify-center py-12 px-6 lg:px-8 sm:bg-gray-50">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -17,7 +74,7 @@ export default function Login({ }: PageProps) {
 
                 <p className="mt-2 text-center text-sm text-gray-600">
                     Or{' '}
-                    <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+                    <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
                         register here
                     </a>
                 </p>
@@ -25,6 +82,14 @@ export default function Login({ }: PageProps) {
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-white py-8 px-4 sm:shadow sm:rounded-lg sm:px-10">
+                    {data.formSubmitted && !data.loginSuccess && (
+                        <p className="mb-6 p-2 bg-red-100 text-red-800 rounded-md border border-red-300 text-center">Failed to login with username and password</p>
+                    )}
+
+                    {data.formSubmitted && data.loginSuccess && (
+                        <p className="mb-6 p-2 bg-green-100 text-green-800 rounded-md border border-green-300 text-center">Login succeeded</p>
+                    )}
+
                     <form className="space-y-6" action="#" method="POST">
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -38,7 +103,8 @@ export default function Login({ }: PageProps) {
                                     type="username"
                                     autoComplete="username"
                                     required
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    defaultValue={data.username}
+                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                 />
                             </div>
                         </div>
@@ -55,7 +121,7 @@ export default function Login({ }: PageProps) {
                                     type="password"
                                     autoComplete="current-password"
                                     required
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                 />
                             </div>
                         </div>
@@ -63,19 +129,21 @@ export default function Login({ }: PageProps) {
                         <div className="flex items-center justify-between">
                             <div className="flex items-center">
                                 <input
-                                    id="remember-me"
-                                    name="remember-me"
+                                    id="rememberMe"
+                                    name="rememberMe"
                                     type="checkbox"
-                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                    value="true"
+                                    checked={data.rememberMe}
                                 />
 
-                                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                                <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-900">
                                     Remember me
                                 </label>
                             </div>
 
                             <div className="text-sm">
-                                <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+                                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
                                     Forgot your password?
                                 </a>
                             </div>

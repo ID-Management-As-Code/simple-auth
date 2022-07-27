@@ -1,5 +1,6 @@
-
-import { getDbProvider, Settings } from "../data/index.ts";
+import { v5 } from "$std/uuid/mod.ts"
+import { crypto } from "$std/crypto/mod.ts";
+import { getDbProvider, Settings } from "@data/index.ts";
 import { hashPassword } from "./crypto.ts";
 import { EnvKey, getEnvValue } from "./env.ts";
 
@@ -58,6 +59,7 @@ export async function createDefaultAdministrator() {
         await db.users.add({
             id: "",
             createdAt: currentDate.toISOString(),
+            internalId: await generateUuid(),
             passwordHash: hashedAdminPassword,
             username: adminUsername,
             updatedAt: currentDate.toISOString(),
@@ -65,4 +67,20 @@ export async function createDefaultAdministrator() {
 
         console.log(`Default admin ${adminUsername} has been created.`);
     }
+}
+
+export async function generateUuid() {
+    const appId = getEnvValue<string>(EnvKey.APP_ID);
+
+    if (!appId) {
+        throw new Error(
+            `The ${EnvKey.APP_ID} environment variable is required.`
+        );
+    }
+
+    const bytes = new Uint8Array(64);
+
+    crypto.getRandomValues(bytes);
+
+    return await v5.generate(appId, bytes);
 }

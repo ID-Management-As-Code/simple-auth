@@ -1,11 +1,20 @@
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
-import { settings } from "@utilities/site.ts";
+import { authentication, maintenance, staticFiles } from "../middleware/index.ts";
 
-export const handler = async (_: Request, context: MiddlewareHandlerContext) => {
+export const handler = async (request: Request, context: MiddlewareHandlerContext) => {
+    const maintenanceResponse = maintenance()
 
-    if (settings?.underMaintenance) {
-        return new Response("Under maintenance, come back later.");
-    }
+    if (maintenanceResponse) return maintenanceResponse;
 
-    return await context.next();
+    const response = await context.next();
+
+    const staticFilesResponse = staticFiles(request, response);
+
+    if (staticFilesResponse) return staticFilesResponse;
+
+    const authenticationResponse = authentication(request, response);
+
+    if (authenticationResponse) return authenticationResponse;
+
+    return response;
 }

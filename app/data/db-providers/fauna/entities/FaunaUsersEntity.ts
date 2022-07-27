@@ -46,16 +46,45 @@ export class FaunaUsersEntity implements UsersEntity {
     }
 
     async getById(id: string) {
-        const document = await this.client.query<UsersDocument>(
-            query.Get(
-                query.Ref(
-                    query.Collection(this.collection),
-                    id
+        try {
+            const document = await this.client.query<UsersDocument>(
+                query.Get(
+                    query.Ref(
+                        query.Collection(this.collection),
+                        id
+                    )
                 )
-            )
-        );
+            );
 
-        return { ...document.data, id: document.ref.id };
+            return { ...document.data, id: document.ref.id };
+        } catch (error) {
+            if (error instanceof fauna.errors.NotFound) {
+                return undefined;
+            }
+
+            throw error;
+        }
+    }
+
+    async getByInternalId(id: string) {
+        try {
+            const document = await this.client.query<UsersDocument>(
+                query.Get(
+                    query.Match(
+                        query.Index("users_by_internal_id"),
+                        id
+                    )
+                )
+            );
+
+            return { ...document.data, id: document.ref.id };
+        } catch (error) {
+            if (error instanceof fauna.errors.NotFound) {
+                return undefined;
+            }
+
+            throw error;
+        }
     }
 
     async getByUsername(username: string) {

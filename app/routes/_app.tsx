@@ -8,7 +8,9 @@ export default function App({ Component }: AppProps) {
     return (
         <>
             <Head>
-                <link rel="stylesheet" href={asset("/styles.css")} />
+                <link rel="icon" type="image/x-icon" href={asset("/images/favicon.ico")} />
+
+                <link rel="stylesheet" href={asset("/styles/styles.css")} />
             </Head>
 
             <Component />
